@@ -2,29 +2,102 @@
 @import 'react-calendar/dist/Calendar.css';
 
 @theme {
-  --color-navy-950: #0a1628;
-  --color-navy-900: #0f2744;
-  --color-navy-800: #1a365d;
-  --color-navy-700: #234876;
-  --color-mint-400: #4fd1c5;
-  --color-mint-300: #81e6d9;
-  --color-sky-400: #38bdf8;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-tertiary: #ffffff;
+  --color-outline: #6f7883;
+  --color-on-secondary-fixed: #001d36;
+  --color-on-secondary-fixed-variant: #27496c;
+  --color-primary-fixed: #e8f4fc;
+  --color-surface-container-high: #e6e8ea;
+  --color-secondary-container: #d6ebff;
+  --color-tertiary-fixed-dim: #bac8d3;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+  --color-surface-variant: #e0e3e5;
+  --color-error: #ba1a1a;
+  --color-tertiary: #536069;
+  --color-background: #f7f9fb;
+  --color-on-tertiary-fixed: #101d25;
+  --color-on-secondary-container: #5a7a96;
+  --color-primary-fixed-dim: #cce9f9;
+  --color-primary: #6eb5e0;
+  --color-on-primary-fixed: #1a4a66;
+  --color-surface-container-low: #f2f4f6;
+  --color-on-primary: #ffffff;
+  --color-on-tertiary-container: #28353e;
+  --color-inverse-primary: #cce9f9;
+  --color-tertiary-container: #909ea8;
+  --color-surface-container: #eceef0;
+  --color-outline-variant: #bec7d4;
+  --color-surface-bright: #f7f9fb;
+  --color-inverse-surface: #2d3133;
+  --color-on-error: #ffffff;
+  --color-secondary-fixed: #ebf5ff;
+  --color-on-surface-variant: #3f4852;
+  --color-surface-container-highest: #e0e3e5;
+  --color-on-surface: #191c1e;
+  --color-inverse-on-surface: #eff1f3;
+  --color-surface-tint: #6eb5e0;
+  --color-secondary-fixed-dim: #d4e9f8;
+  --color-surface: #f7f9fb;
+  --color-secondary: #7aa8c9;
+  --color-on-primary-fixed-variant: #3d6d8f;
+  --color-on-tertiary-fixed-variant: #3b4851;
+  --color-tertiary-fixed: #d6e4ef;
+  --color-primary-container: #a8dcfa;
+  --color-on-secondary: #ffffff;
+  --color-on-background: #191c1e;
+  --color-on-primary-container: #1a5270;
+  --color-surface-dim: #d8dadc;
+
+  --spacing-margin-mobile: 16px;
+  --spacing-md: 24px;
+  --spacing-base: 8px;
+  --spacing-container-padding: 16px;
+  --spacing-card-gap: 12px;
+
+  --font-family-sans: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-mono: 'JetBrains Mono', monospace;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 body {
   margin: 0;
   min-height: 100dvh;
-  font-family:
-    'Pretendard',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
-  background: linear-gradient(160deg, var(--color-navy-950) 0%, #0c4a6e 45%, var(--color-navy-900) 100%);
+  font-family: var(--font-family-sans);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* react-calendar 커스텀 */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.material-symbols-filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+.glow-primary {
+  box-shadow: 0 4px 14px 0 rgba(110, 181, 224, 0.28);
+}
+
+.chart-bar-transition {
+  transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* react-calendar — Azure Horizon light theme */
 .rider-calendar {
   width: 100%;
   border: none;
@@ -42,31 +115,30 @@ body {
   min-width: 2.25rem;
   background: none;
   border: none;
-  color: #e2e8f0;
-  font-size: 1.125rem;
+  color: var(--color-on-surface);
+  font-size: 1rem;
   font-weight: 600;
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   padding: 0.5rem;
   transition: background-color 0.15s;
 }
 
-.rider-calendar .react-calendar__navigation button:enabled:hover,
-.rider-calendar .react-calendar__navigation button:enabled:focus {
-  background: rgba(79, 209, 197, 0.15);
+.rider-calendar .react-calendar__navigation button:enabled:hover {
+  background: var(--color-surface-container-high);
 }
 
 .rider-calendar .react-calendar__navigation__label {
   flex-grow: 1;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 700;
-  color: #f8fafc;
+  color: var(--color-primary);
 }
 
 .rider-calendar .react-calendar__month-view__weekdays {
   text-align: center;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--color-on-surface-variant);
   text-transform: none;
 }
 
@@ -85,50 +157,38 @@ body {
   padding: 0.25rem;
   background: none;
   border: none;
-  border-radius: 0.75rem;
-  color: #cbd5e1;
+  border-radius: 0.5rem;
+  color: var(--color-on-surface);
   font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.15s;
 }
 
 .rider-calendar .react-calendar__tile:enabled:hover {
-  background: rgba(56, 189, 248, 0.12);
-  color: #f1f5f9;
+  background: var(--color-primary-fixed);
 }
 
 .rider-calendar .react-calendar__tile--now {
-  background: rgba(79, 209, 197, 0.18);
-  color: #5eead4;
+  background: var(--color-secondary-container);
+  color: var(--color-primary);
   font-weight: 700;
 }
 
 .rider-calendar .react-calendar__tile--active {
-  background: linear-gradient(135deg, #38bdf8, #4fd1c5) !important;
-  color: #0a1628 !important;
+  background: var(--color-primary-container) !important;
+  color: var(--color-on-primary-container) !important;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
 }
 
 .rider-calendar .react-calendar__tile--neighboringMonth {
-  color: #475569;
+  color: var(--color-outline);
 }
 
 .rider-calendar .react-calendar__month-view__days__day--weekend {
-  color: #7dd3fc;
+  color: var(--color-secondary);
 }
 
 .rider-calendar .react-calendar__tile.has-record:not(.react-calendar__tile--active) {
-  background: rgba(30, 58, 95, 0.55);
-  color: #e2e8f0;
-}
-
-.rider-calendar .react-calendar__tile.has-record:not(.react-calendar__tile--active)::after {
-  content: '';
-  position: absolute;
-  bottom: 0.35rem;
-  width: 0.3rem;
-  height: 0.3rem;
-  border-radius: 9999px;
-  background: #4fd1c5;
+  background: var(--color-surface-container-low);
+  font-weight: 600;
 }

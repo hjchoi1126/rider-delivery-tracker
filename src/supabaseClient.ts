@@ -31,6 +31,26 @@ export interface DeliveryRow {
   work_date: string;
   call_count: number;
   total_income: number;
+  platform_baemin: number;
+  platform_coupang: number;
+  platform_yogiyo: number;
+  platform_ddangyo: number;
+  platform_ubereats: number;
+  platform_agency: number;
+  memo: string | null;
+  created_at: string;
+}
+
+export interface ExpenseRow {
+  id: string;
+  user_id: string;
+  work_date: string;
+  fuel: number;
+  maintenance: number;
+  insurance: number;
+  food: number;
+  lease: number;
+  other: number;
   memo: string | null;
   created_at: string;
 }
@@ -40,11 +60,23 @@ export interface DeliveryInsert {
   work_date: string;
   call_count?: number;
   total_income?: number;
+  platform_baemin?: number;
+  platform_coupang?: number;
+  platform_yogiyo?: number;
+  platform_ddangyo?: number;
+  platform_ubereats?: number;
+  platform_agency?: number;
   memo?: string | null;
 }
 
-export interface DeliveryUpdate {
-  call_count?: number;
-  total_income?: number;
+export interface ExpenseInsert {
+  user_id: string;
+  work_date: string;
+  fuel?: number;
+  maintenance?: number;
+  insurance?: number;
+  food?: number;
+  lease?: number;
+  other?: number;
   memo?: string | null;
 }

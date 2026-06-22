@@ -1,12 +1,12 @@
 {
-  "theme_color": "#1e3a8a",
+  "theme_color": "#a8dcfa",
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "라이더 달력 - 수입 관리",
-  "short_name": "라이더달력",
-  "description": "라이더들을 위한 일자별 배달 건수 및 수입 관리 장부",
+  "name": "런앤콜 (Run & Call)",
+  "short_name": "런앤콜",
+  "description": "런앤콜 — Run & Call. 배달 수입·지출·플랫폼별 분석",
   "icons": [
     {
       "src": "/icon-192x192.png",

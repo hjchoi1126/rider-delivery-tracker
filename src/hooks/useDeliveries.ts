@@ -3,20 +3,30 @@ import {
   CalcMonthlySummaryLogic,
   deleteDeliveryData,
   fetchMonthlyData,
-  ToRecordMapLogic,
+  MergeRecordMapLogic,
+  upsertDayData,
   upsertDeliveryData,
 } from '../services/deliveryService';
 import type {
   DeliveryRecord,
   DeliveryRecordMap,
+  ExpenseRecord,
   MonthlySummary,
+  UpsertDayInput,
   UpsertDeliveryInput,
   UseDeliveriesReturn,
   WorkDate,
   YearMonth,
 } from '../types/delivery';
+import { EMPTY_PLATFORM_INCOME } from '../types/delivery';
 
-const EMPTY_SUMMARY: MonthlySummary = { totalIncome: 0, totalCount: 0 };
+const EMPTY_SUMMARY: MonthlySummary = {
+  totalIncome: 0,
+  totalExpense: 0,
+  netProfit: 0,
+  totalCount: 0,
+  platformIncome: { ...EMPTY_PLATFORM_INCOME },
+};
 
 interface UseDeliveriesOptions {
   userId: string;
@@ -31,6 +41,7 @@ export function useDeliveries({
     initialYearMonth ?? (new Date().toISOString().slice(0, 7) as YearMonth),
   );
   const [records, setRecords] = useState<DeliveryRecord[]>([]);
+  const [expenseRecords, setExpenseRecords] = useState<ExpenseRecord[]>([]);
   const [recordMap, setRecordMap] = useState<DeliveryRecordMap>({});
   const [summary, setSummary] = useState<MonthlySummary>(EMPTY_SUMMARY);
   const [loading, setLoading] = useState(true);
@@ -50,6 +61,7 @@ export function useDeliveries({
 
       if (result.error || !result.data) {
         setRecords([]);
+        setExpenseRecords([]);
         setRecordMap({});
         setSummary(EMPTY_SUMMARY);
         setError(result.error ?? '데이터를 불러오지 못했습니다.');
@@ -57,10 +69,12 @@ export function useDeliveries({
       }
 
       setRecords(result.data.records);
+      setExpenseRecords(result.data.expenseRecords);
       setRecordMap(result.data.recordMap);
       setSummary(result.data.summary);
     } catch (err) {
       setRecords([]);
+      setExpenseRecords([]);
       setRecordMap({});
       setSummary(EMPTY_SUMMARY);
       setError(err instanceof Error ? err.message : '데이터를 불러오지 못했습니다.');
@@ -72,6 +86,57 @@ export function useDeliveries({
   useEffect(() => {
     void refetch();
   }, [refetch]);
+
+  const applyLocalStateLogic = useCallback(
+    (nextRecords: DeliveryRecord[], nextExpenseRecords: ExpenseRecord[]) => {
+      setRecords(nextRecords);
+      setExpenseRecords(nextExpenseRecords);
+      setRecordMap(MergeRecordMapLogic(nextRecords, nextExpenseRecords));
+      setSummary(CalcMonthlySummaryLogic(nextRecords, nextExpenseRecords));
+    },
+    [],
+  );
+
+  const handleUpsertDayData = useCallback(
+    async (input: UpsertDayInput): Promise<boolean> => {
+      setSaving(true);
+      setError(null);
+
+      try {
+        const result = await upsertDayData(input);
+
+        if (result.error) {
+          setError(result.error);
+          return false;
+        }
+
+        const workDate = input.workDate;
+        let nextRecords = records.filter((item) => item.workDate !== workDate);
+        let nextExpenseRecords = expenseRecords.filter((item) => item.workDate !== workDate);
+
+        if (result.data?.delivery) {
+          nextRecords = [...nextRecords, result.data.delivery].sort((a, b) =>
+            a.workDate.localeCompare(b.workDate),
+          );
+        }
+
+        if (result.data?.expense) {
+          nextExpenseRecords = [...nextExpenseRecords, result.data.expense].sort((a, b) =>
+            a.workDate.localeCompare(b.workDate),
+          );
+        }
+
+        applyLocalStateLogic(nextRecords, nextExpenseRecords);
+        return true;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '저장에 실패했습니다.');
+        return false;
+      } finally {
+        setSaving(false);
+      }
+    },
+    [records, expenseRecords, applyLocalStateLogic],
+  );
 
   const handleUpsertDeliveryData = useCallback(
     async (data: UpsertDeliveryInput): Promise<boolean> => {
@@ -91,10 +156,7 @@ export function useDeliveries({
           (a, b) => a.workDate.localeCompare(b.workDate),
         );
 
-        setRecords(nextRecords);
-        setRecordMap(ToRecordMapLogic(nextRecords));
-        setSummary(CalcMonthlySummaryLogic(nextRecords));
-
+        applyLocalStateLogic(nextRecords, expenseRecords);
         return true;
       } catch (err) {
         setError(err instanceof Error ? err.message : '저장에 실패했습니다.');
@@ -103,7 +165,7 @@ export function useDeliveries({
         setSaving(false);
       }
     },
-    [records],
+    [records, expenseRecords, applyLocalStateLogic],
   );
 
   const handleDeleteDeliveryData = useCallback(
@@ -120,11 +182,7 @@ export function useDeliveries({
         }
 
         const nextRecords = records.filter((item) => item.workDate !== workDate);
-
-        setRecords(nextRecords);
-        setRecordMap(ToRecordMapLogic(nextRecords));
-        setSummary(CalcMonthlySummaryLogic(nextRecords));
-
+        applyLocalStateLogic(nextRecords, expenseRecords);
         return true;
       } catch (err) {
         setError(err instanceof Error ? err.message : '삭제에 실패했습니다.');
@@ -133,11 +191,12 @@ export function useDeliveries({
         setSaving(false);
       }
     },
-    [userId, records],
+    [userId, records, expenseRecords, applyLocalStateLogic],
   );
 
   return {
     records,
+    expenseRecords,
     recordMap,
     summary,
     loading,
@@ -146,6 +205,7 @@ export function useDeliveries({
     yearMonth,
     setYearMonth,
     refetch,
+    upsertDayData: handleUpsertDayData,
     upsertDeliveryData: handleUpsertDeliveryData,
     deleteDeliveryData: handleDeleteDeliveryData,
     clearError,
